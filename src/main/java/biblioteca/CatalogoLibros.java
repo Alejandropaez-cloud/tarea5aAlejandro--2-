@@ -1,122 +1,104 @@
 package biblioteca;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 public class CatalogoLibros {
+
+    private final ArrayList<Libro> lista;
+
+    public int buscarPorTitulo(String titulo){
+        ordenarPorTitulo();
+        Libro aux = new Libro();
+        aux.setTitulo(titulo);
+        return  Collections.binarySearch(lista, aux, (l1,l2)->l1.getTitulo().compareTo(l2.getTitulo()));
+    }
+
     
-    // El unico atributo encapsulado de esta clase va a ser "listadeobjetos"
-    private ArrayList<Libro> libros;
 
-    // Constructor predeterminado.
-    public CatalogoLibros(){
-        // (creará e inicializará la lista con una capacidad inicial de 
-        // 100 elementos, por eficiencia).
-        libros = new ArrayList<>(100);
-        //initialCapacity = Capacidad inicial.
+    public void ordenarPorTitulo(){
+        Collections.sort(lista, (l1,l2)->l1.getTitulo().compareTo(l2.getTitulo()));
     }
 
-    // Método cantidad().
-    // Devuelve el número de libros.
+    public void ordenarPorPublicacion(){
+        Collections.sort(lista, (l1,l2)->l2.getAnioPublicacion()-l1.getAnioPublicacion());
+        //Collections.sort(lista, (libroa, librob)->Integer.compare(libroa.getAnioPublicacion(), librob.getAnioPublicacion()));
+    }
+
+    public CatalogoLibros() {
+        lista = new ArrayList<>(100);
+    }
+
     public int cantidad(){
-        return libros.size();
+        return lista.size();
     }
 
-    // Método estaVacia().
-    // Devuelve si la lista está vacía.
     public boolean estaVacia(){
-        return libros.isEmpty();
-        // libros.isEmpty() --> Returns true if this list contains no elements.
+        return lista.isEmpty();
     }
 
-    // Método obtener(int pos).
-    // Devuelve el libro de la posición indicada.
-    public Libro obtener(int pos){
-        if (pos < 0 || pos >= libros.size()) {
+    public void guardar(Libro libro){
+        lista.add(libro);
+    }
+
+    public void imprimir(){
+        lista.forEach(System.out::println);
+    }
+
+    public Libro obtener(int posicion){
+        if (posicion<0 || posicion>lista.size()-1){
             return null;
         }
-        return libros.get(pos);
+        return lista.get(posicion);
     }
 
-    // Método cambiar(int pos)
-    // Cambia el libro de la posicion indicada.
-    public void cambiar (int pos, Libro nuevo){
-        if (pos >= 0 && pos < libros.size() && nuevo != null) {
-            libros.set(pos, nuevo);
+    public void cambiar(int pos, Libro nuevo){
+        if (pos>=0&&pos<lista.size()){
+            lista.set(pos, nuevo);
         }
     }
 
-    // Método guardar(Libro libro)
-    // Agrega un libro al final de la lista.
-    public void guardar (Libro libro){
-        if (libro != null) {
-            libros.add(libro);
-        }
+    public int buscar(Libro libro){
+        return lista.indexOf(libro);
     }
 
-    // Método eliminar(int pos)
-    // Elimina el libro que se encuentra en la posición indicada.
-    public void eliminar(int pos) {
-        if (pos >= 0 && pos < libros.size()) {
-            libros.remove(pos);
-        }
-    }
-
-    // Método eliminar(String isbn)
-    // Elimina el objeto libro que tiene ese isbn si se encuentra en la lista.
-    public void eliminar(String isbn) {
-        if (isbn != null) {
-            libros.removeIf(libro -> String.valueOf(libro.getIsbn()).equals(isbn));
-        }
-    }
-
-    // Método imprimir()
-    // Imprime los datos de los libros de la lista.
-    public void imprimir() {
-        if (estaVacia()) {
-            System.out.println("El catálogo está vacío.");
-            return;
-        }
-        System.out.println("\n=== CATÁLOGO DE LIBROS ===");
-        for (int i = 0; i < libros.size(); i++) {
-            System.out.println("Posición " + i + ": " + libros.get(i));
-        }
-        System.out.println("Total de libros: " + cantidad() + "\n");
-    }
-
-    // Método buscar(Libro libro)
-    // Busca el libro en la lista y devuelve la posición en la que se encuentra.
-    public int buscar(Libro libro) {
-        return libros.indexOf(libro);
-    }
-
-    // Método buscar(String autor)
-    // Busca todos los libros de ese autor y los devuelve en una lista de libros.
-    public List<Libro> buscar(String autor) {
-        List<Libro> resultado = new ArrayList<>();
-        if (autor != null) {
-            for (Libro libro : libros) {
-                if (libro.getAutor().equalsIgnoreCase(autor)) {
-                    resultado.add(libro);
-                }
+    public ArrayList<Libro> buscarAutor(String autor){
+        var listaAux = new ArrayList<Libro>();
+        for (Libro libro : lista) {
+            if (autor.equalsIgnoreCase(libro.getAutor())){
+                listaAux.add(libro);
             }
         }
-        return resultado;
+        return listaAux;
     }
 
-    // Método buscar(String isbn)
-    // Busca el libro que tiene ese isbn y lo devuelve si existe, en caso contrario devuelve null.
-    public Libro buscarPorIsbn(String isbn) {
-        if (isbn != null) {
-            for (Libro libro : libros) {
-                if (String.valueOf(libro.getIsbn()).equals(isbn)) {
+    public Libro buscarIsbn(String isbn){
+        try {
+            long isbnLong = Long.parseLong(isbn);
+            for (Libro libro : lista) {
+                if (libro.getIsbn() == isbnLong){
                     return libro;
                 }
             }
+        } catch (NumberFormatException e) {
+            // ISBN inválido
         }
         return null;
     }
 
+    public void eliminar(int pos){
+        if (pos>=0&&pos<lista.size()){
+            lista.remove(pos);
+        }
+    }
+
+    public void eliminar(String isbn){
+        Libro aux = buscarIsbn(isbn);
+        if (aux!=null){
+            lista.remove(aux);
+        }
+    }
+}
     // Deberes finde 
     /*
     Método compareto:
@@ -148,4 +130,4 @@ public class CatalogoLibros {
 
 
   */
-}
+

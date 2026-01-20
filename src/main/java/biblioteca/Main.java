@@ -43,7 +43,7 @@ public class Main {
         catalogo.imprimir();
         
         System.out.println("Búsqueda de 'Gabriel García Márquez':");
-        List<Libro> librosAutor = catalogo.buscar("Gabriel García Márquez");
+        List<Libro> librosAutor = catalogo.buscarAutor("Gabriel García Márquez");
         for (Libro libro : librosAutor) {
             System.out.println("  - " + libro.getTitulo());
         }
@@ -176,7 +176,7 @@ public class Main {
         if (isbn == null) {
             JOptionPane.showMessageDialog(null, "Operación cancelada");
         } else {
-            Libro libro = catalogo.buscarPorIsbn(isbn);
+            Libro libro = catalogo.buscarIsbn(isbn);
             if (libro != null) {
                 JOptionPane.showMessageDialog(null, "Libro encontrado:\n" + libro);
             } else {
@@ -190,7 +190,7 @@ public class Main {
         if (autor == null) {
             JOptionPane.showMessageDialog(null, "Operación cancelada");
         } else {
-            List<Libro> libros = catalogo.buscar(autor);
+            List<Libro> libros = catalogo.buscarAutor(autor);
             if (libros.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "No se encontraron libros del autor: " + autor);
             } else {
